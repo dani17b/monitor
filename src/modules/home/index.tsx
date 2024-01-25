@@ -12,6 +12,7 @@ export const Home = () => {
   return (
     <div className="home">
       Esto es la home, poner una lista de proyectos
+      LISTAR LOS PROYECTOS Y PONER UN FORMULARIO PARA CREAR UNO NUEVO Y OTRO PARA DESPLEGAR
     </div>
   );
 }
