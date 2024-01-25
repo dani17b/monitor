@@ -1,12 +1,13 @@
 import React from 'react';
-//import './app.css';
+import './tailwind-dist.css';
 import { Home } from './modules/home';
+import { NextUIProvider } from '@nextui-org/react';
 
 function App() {
   return (
-    <div>
+    <NextUIProvider>
       <Home />
-    </div>
+    </NextUIProvider>
   );
 }
 
