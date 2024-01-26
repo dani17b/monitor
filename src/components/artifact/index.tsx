@@ -12,8 +12,7 @@ import {
 import "./artifact.css";
 import { useState } from "react";
 
-
-export const Artifact = ({ artifact }: { artifact: any }) => {
+export const Artifact = ({ artifact, deploy }: { artifact: any, deploy : any }) => {
   const [isFollowed, setIsFollowed] = useState(false);
 
   return (
@@ -34,14 +33,13 @@ export const Artifact = ({ artifact }: { artifact: any }) => {
           className={
             isFollowed
               ? "bg-transparent text-foreground border-default-200"
-              : ""
-            + ' rounded-none'
+              : "" + " rounded-none"
           }
           color="primary"
           radius="full"
           size="sm"
           variant={isFollowed ? "bordered" : "solid"}
-          onPress={() => setIsFollowed(!isFollowed)}
+          onPress={() => deploy()}
         >
           {isFollowed ? "Unfollow" : "Deploy"}
         </Button>
