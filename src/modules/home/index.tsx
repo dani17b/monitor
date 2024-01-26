@@ -9,13 +9,15 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
-  Textarea,
   useDisclosure,
 } from "@nextui-org/react";
+import { ArtifactForm } from "../../components/artifactForm";
 
 export const Home = () => {
   const [artifacts, setArtifacts] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isArtifactFormOpen, setIsArtifactFormOpen] = useState(false);
+
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [selectedArtifact, setSelectedArtifact] = useState<any>(null);
 
@@ -62,7 +64,11 @@ export const Home = () => {
         </div>
       )}
 
-      <Button onPress={onOpen}>Open Modal</Button>
+      <div className="flex justify-end mt-2">
+        <Button onPress={() => setIsArtifactFormOpen(true)}>
+          Nuevo artefacto
+        </Button>
+      </div>
       <Modal
         isOpen={isOpen}
         onOpenChange={onOpenChange}
@@ -88,10 +94,13 @@ export const Home = () => {
                   <Button color="danger" variant="light" onPress={onClose}>
                     Close
                   </Button>
-                  <Button color="primary" onPress={() => {
-                    onClose();
-                    deploy(selectedArtifact);
-                  }}>
+                  <Button
+                    color="primary"
+                    onPress={() => {
+                      onClose();
+                      deploy(selectedArtifact);
+                    }}
+                  >
                     Deploy
                   </Button>
                 </ModalFooter>
@@ -100,6 +109,19 @@ export const Home = () => {
           </ModalContent>
         )}
       </Modal>
+      <ArtifactForm visible={isArtifactFormOpen} onClose={() => setIsArtifactFormOpen(false)} deploy={(artifactInfo : any) => {
+        fetch("http://api.monitor.altiacamp.com/artifact", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(artifactInfo),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            console.log(data);
+          });
+      }}/>
     </div>
   );
 };
