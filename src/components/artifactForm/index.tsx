@@ -176,7 +176,7 @@ export const ArtifactForm = (props: any) => {
 
                   props.deploy({
                     ...formData,
-                    domain : formData.domain + ".altiacamp.com"
+                    domain : formData.domain.indexOf(".altiacamp.com") != -1 ? formData.domain : (formData.domain + ".altiacamp.com")
                   });
                 }}
               >

@@ -3,6 +3,7 @@ import "./home.css";
 import { Artifact } from "../../components/artifact";
 import {
   Button,
+  Chip,
   Input,
   Modal,
   ModalBody,
@@ -18,8 +19,18 @@ export const Home = () => {
   const [loading, setLoading] = useState(true);
   const [isArtifactFormOpen, setIsArtifactFormOpen] = useState(false);
 
+  const [pendingDeployments, setPendingDeployments] = useState<any[]>([]);
+  const [pendingDeploymentsLoading, setPendingDeploymentsLoading] = useState(true);
+
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [selectedArtifact, setSelectedArtifact] = useState<any>(null);
+
+  const getPendingDeployments = () => {
+    fetch("http://api.monitor.altiacamp.com/pending_deployments").then((response) => response.json()).then((data) => {
+      setPendingDeployments(data);
+      setPendingDeploymentsLoading(false);
+    });
+  }
 
   useEffect(() => {
     fetch("http://api.monitor.altiacamp.com/info")
@@ -28,7 +39,11 @@ export const Home = () => {
         setArtifacts(data);
         setLoading(false);
       });
+
+    getPendingDeployments();
   }, []);
+
+  
 
   const deploy = (artifact: any) => {
     fetch("http://api.monitor.altiacamp.com/deploy", {
@@ -42,13 +57,43 @@ export const Home = () => {
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log(data);
+        getPendingDeployments();
       });
   };
 
   return (
     <div className="home">
       {loading && <div>Loading...</div>}
+      <div className="flex gap-2 mb-2">
+        {pendingDeployments.map((deployment: any) => (
+          <Chip
+            key={deployment.key}
+            className="rounded-none text-white"
+            color={
+              deployment.status === "pending"
+                ? "warning"
+                : deployment.status === "running"
+                ? "default"
+                : "default"
+            }
+            onClose={deployment.status === "pending" ? () => {
+              fetch("http://api.monitor.altiacamp.com/pending_deployments", {
+                method: "DELETE",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  key: deployment.key,
+                }),
+              }).then(() => {
+                getPendingDeployments();
+              });
+            } : undefined}
+          >
+            {deployment.key}
+          </Chip>
+        ))}
+      </div>
       {!loading && artifacts && (
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-3">
           {Object.keys(artifacts).map((artifactKey: string) => (
