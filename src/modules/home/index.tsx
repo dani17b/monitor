@@ -59,6 +59,10 @@ export const Home = () => {
                 setSelectedArtifact(artifacts[artifactKey]);
                 onOpen();
               }}
+              showEditArtifact={() => {
+                setSelectedArtifact(artifacts[artifactKey]);
+                setIsArtifactFormOpen(true);
+              }}
             />
           ))}
         </div>
@@ -109,19 +113,27 @@ export const Home = () => {
           </ModalContent>
         )}
       </Modal>
-      <ArtifactForm visible={isArtifactFormOpen} onClose={() => setIsArtifactFormOpen(false)} deploy={(artifactInfo : any) => {
-        fetch("http://api.monitor.altiacamp.com/artifact", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(artifactInfo),
-        })
-          .then((response) => response.json())
-          .then((data) => {
-            console.log(data);
-          });
-      }}/>
+      <ArtifactForm
+        visible={isArtifactFormOpen}
+        onClose={() => {
+          setIsArtifactFormOpen(false);
+          setSelectedArtifact(null);
+        }}
+        artifact={selectedArtifact}
+        deploy={(artifactInfo: any) => {
+          fetch("http://api.monitor.altiacamp.com/artifact", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(artifactInfo),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              console.log(data);
+            });
+        }}
+      />
     </div>
   );
 };

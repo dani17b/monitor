@@ -4,15 +4,36 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
-  Chip,
-  Divider,
-  Image,
-  Link,
+  Chip
 } from "@nextui-org/react";
 import "./artifact.css";
+import { IoIosRocket, IoMdCreate } from "react-icons/io";
 import { useState } from "react";
 
-export const Artifact = ({ artifact, deploy }: { artifact: any, deploy : any }) => {
+const timestampToTimeFromNow = (timestamp: number) => {
+  const date = new Date(timestamp);
+  const now = new Date();
+  const diff = now.getTime() - date.getTime();
+  const seconds = Math.floor(diff / 1000);
+  const minutes = Math.floor(seconds / 60);
+  const hours = Math.floor(minutes / 60);
+
+  if (hours > 24) {
+    return `${Math.floor(hours / 24)}d ago`;
+  }
+
+  if (hours > 0) {
+    return `${hours}h ago`;
+  }
+
+  if (minutes > 0) {
+    return `${minutes}m ago`;
+  }
+
+  return `${seconds}s ago`;
+}
+
+export const Artifact = ({ artifact, deploy, showEditArtifact }: { artifact: any, deploy : any, showEditArtifact : any }) => {
   const [isFollowed, setIsFollowed] = useState(false);
 
   return (
@@ -46,22 +67,20 @@ export const Artifact = ({ artifact, deploy }: { artifact: any, deploy : any }) 
       </CardHeader>
       <CardBody className="px-3 py-0 text-small text-default-400">
         <p>
-          Frontend developer and UI/UX enthusiast. Join me on this coding
-          adventure!
+          {artifact.description}
         </p>
         <span className="pt-2">
           <Chip className="rounded-none float-left mr-2">{artifact.type}</Chip>
           <Chip className="rounded-none float-left">{artifact.deployType}</Chip>
         </span>
       </CardBody>
-      <CardFooter className="gap-3">
-        <div className="flex gap-2">
-          <p className="font-semibold text-default-400 text-small">4</p>
-          <p className=" text-default-400 text-small">Following</p>
+      <CardFooter className="gap-3 flex">
+        <div className="flex gap-1 text-default-400 text-small items-center">
+          <IoIosRocket />
+          Last deploy {timestampToTimeFromNow(artifact.instance.lastUpdate)}
         </div>
-        <div className="flex gap-1">
-          <p className="font-semibold text-default-400 text-small">97.1K</p>
-          <p className="text-default-400 text-small">Followers</p>
+        <div className="flex flex-1 justify-end gap-1 text-default-400 text-small">
+          <IoMdCreate className="cursor-pointer" onClick={() => showEditArtifact()}/>
         </div>
       </CardFooter>
     </Card>

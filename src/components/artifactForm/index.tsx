@@ -15,7 +15,7 @@ import {
 import { useEffect, useState } from "react";
 
 const platforms = [
-  { label: "NodeJS", value: "nodejs" },
+  { label: "NodeJS", value: "node" },
   { label: "Maven", value: "maven" },
 ];
 
@@ -27,6 +27,14 @@ const deployTypes = [
 export const ArtifactForm = (props: any) => {
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [formData, setFormData] = useState<any>({});
+
+  useEffect(() => {
+    if (props.artifact) {
+      setFormData(props.artifact);
+    }else{
+      setFormData({});
+    }
+  }, [props.artifact]);
 
   useEffect(() => {
     if (props.visible) {
@@ -60,6 +68,7 @@ export const ArtifactForm = (props: any) => {
                 onChange={(e) =>
                   setFormData({ ...formData, artifactName: e.target.value })
                 }
+                value={formData.artifactName}
               />
               <Textarea
                 label="Description"
@@ -67,6 +76,7 @@ export const ArtifactForm = (props: any) => {
                 onChange={(e) =>
                   setFormData({ ...formData, description: e.target.value })
                 }
+                value={formData.description}
               />
               <Input
                 type="url"
@@ -83,6 +93,7 @@ export const ArtifactForm = (props: any) => {
                     </span>
                   </div>
                 }
+                value={formData.domain}
               />
               <Select
                 label="Platform"
@@ -90,6 +101,7 @@ export const ArtifactForm = (props: any) => {
                 onChange={(e) =>
                   setFormData({ ...formData, type: e.target.value })
                 }
+                selectedKeys={[formData.type]}
               >
                 {platforms.map((platform) => (
                   <SelectItem key={platform.value} value={platform.value}>
@@ -100,6 +112,7 @@ export const ArtifactForm = (props: any) => {
               <Select
                 label="Deploy type"
                 placeholder="Select deploy type"
+                selectedKeys={[formData.deployType]}
                 onChange={(e) =>
                   setFormData({ ...formData, deployType: e.target.value })
                 }
@@ -117,6 +130,7 @@ export const ArtifactForm = (props: any) => {
                     onChange={(e) =>
                     setFormData({ ...formData, deployTarget: e.target.value })
                     }
+                    value={formData.deployTarget}
                 />
               }
               {formData.deployType === "server" && 
@@ -124,8 +138,9 @@ export const ArtifactForm = (props: any) => {
                     label="Deploy command"
                     placeholder="Deploy command"
                     onChange={(e) =>
-                    setFormData({ ...formData, launchCommand: e.target.value })
+                      setFormData({ ...formData, launchCommand: e.target.value })
                     }
+                    value={formData.launchCommand}
                 />
                 }
               <Input
@@ -134,12 +149,14 @@ export const ArtifactForm = (props: any) => {
                 onChange={(e) =>
                   setFormData({ ...formData, repository: e.target.value })
                 }
+                value={formData.repository}
               />
               <Checkbox
                 defaultSelected
                 onChange={(e) =>
                   setFormData({ ...formData, private: e.target.checked })
                 }
+                value={formData.private}
               >
                 Private repository
               </Checkbox>
@@ -163,7 +180,7 @@ export const ArtifactForm = (props: any) => {
                   });
                 }}
               >
-                Create
+                {props.artifact  ? 'Update' : 'Create'}
               </Button>
             </ModalFooter>
           </>
