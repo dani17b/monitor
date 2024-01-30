@@ -54,6 +54,7 @@ export const ArtifactForm = (props: any) => {
         }
       }}
       className="rounded-none"
+      scrollBehavior="inside"
     >
       <ModalContent>
         {(onCloseNewArtifact) => (
@@ -160,6 +161,14 @@ export const ArtifactForm = (props: any) => {
               >
                 Private repository
               </Checkbox>
+              <Input
+                label="Access base url"
+                placeholder="Access base url"
+                onChange={(e) =>
+                  setFormData({ ...formData, accessBaseUrl: e.target.value })
+                }
+                value={formData.accessBaseUrl}
+              />
             </ModalBody>
             <ModalFooter>
               <Button

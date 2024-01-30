@@ -7,7 +7,7 @@ import {
   Chip
 } from "@nextui-org/react";
 import "./artifact.css";
-import { IoIosRocket, IoMdCreate, IoMdPaper } from "react-icons/io";
+import { IoIosLink, IoIosRocket, IoMdCreate, IoMdPaper } from "react-icons/io";
 import { useState } from "react";
 
 const timestampToTimeFromNow = (timestamp: number) => {
@@ -45,8 +45,9 @@ export const Artifact = ({ artifact, deploy, showEditArtifact, showLogs }: { art
               <div className={"artifact-status " + (artifact.instance.status == 'fail' ? 'bg-red-800' : 'bg-green-800')} />
               {artifact.artifactName}
             </h4>
-            <h5 className="text-small tracking-tight text-default-400">
+            <h5 className="text-small tracking-tight text-default-400 flex items-center">
               {artifact.domain}
+              <a href={`http://${artifact.domain}${artifact.accessBaseUrl ||''}`} target="_blank"><IoIosLink className="ml-1"/></a>
             </h5>
           </div>
         </div>
