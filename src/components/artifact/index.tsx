@@ -7,7 +7,7 @@ import {
   Chip
 } from "@nextui-org/react";
 import "./artifact.css";
-import { IoIosRocket, IoMdCreate } from "react-icons/io";
+import { IoIosRocket, IoMdCreate, IoMdPaper } from "react-icons/io";
 import { useState } from "react";
 
 const timestampToTimeFromNow = (timestamp: number) => {
@@ -33,7 +33,7 @@ const timestampToTimeFromNow = (timestamp: number) => {
   return `${seconds}s ago`;
 }
 
-export const Artifact = ({ artifact, deploy, showEditArtifact }: { artifact: any, deploy : any, showEditArtifact : any }) => {
+export const Artifact = ({ artifact, deploy, showEditArtifact, showLogs }: { artifact: any, deploy : any, showEditArtifact : any, showLogs : any }) => {
   const [isFollowed, setIsFollowed] = useState(false);
 
   return (
@@ -42,7 +42,7 @@ export const Artifact = ({ artifact, deploy, showEditArtifact }: { artifact: any
         <div className="flex gap-5">
           <div className="flex flex-col gap-1 items-start justify-center">
             <h4 className="text-small font-semibold leading-none text-default-600 flex items-center">
-              <div className="artifact-status" />
+              <div className={"artifact-status " + (artifact.instance.status == 'fail' ? 'bg-red-800' : 'bg-green-800')} />
               {artifact.artifactName}
             </h4>
             <h5 className="text-small tracking-tight text-default-400">
@@ -80,6 +80,7 @@ export const Artifact = ({ artifact, deploy, showEditArtifact }: { artifact: any
           Last deploy {timestampToTimeFromNow(artifact.instance.lastUpdate)}
         </div>
         <div className="flex flex-1 justify-end gap-1 text-default-400 text-small">
+          {artifact.instance.lastDeployKey && <IoMdPaper className="cursor-pointer" onClick={() => showLogs()}/>}
           <IoMdCreate className="cursor-pointer" onClick={() => showEditArtifact()}/>
         </div>
       </CardFooter>

@@ -15,12 +15,15 @@ import {
 import { ArtifactForm } from "../../components/artifactForm";
 
 export const Home = () => {
-  const [artifacts, setArtifacts] = useState(null);
+  const [artifacts, setArtifacts] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isArtifactFormOpen, setIsArtifactFormOpen] = useState(false);
 
   const [pendingDeployments, setPendingDeployments] = useState<any[]>([]);
   const [pendingDeploymentsLoading, setPendingDeploymentsLoading] = useState(true);
+
+  const [showDeployLog, setShowDeployLog] = useState(false);
+  const [deployLogData, setDeployLogData] = useState<any>(null);
 
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [selectedArtifact, setSelectedArtifact] = useState<any>(null);
@@ -29,6 +32,12 @@ export const Home = () => {
     fetch("http://api.monitor.altiacamp.com/pending_deployments").then((response) => response.json()).then((data) => {
       setPendingDeployments(data);
       setPendingDeploymentsLoading(false);
+    });
+  }
+
+  const getDeploymentLog = (deployKey : string) => {
+    fetch(`http://api.monitor.altiacamp.com/deploy_log?deploy_key=${deployKey}`).then((response) => response.text()).then((data) => {
+      setDeployLogData(data);
     });
   }
 
@@ -41,7 +50,22 @@ export const Home = () => {
       });
 
     getPendingDeployments();
+
+    /* setInterval(() => {
+      getPendingDeployments();
+    }
+    , 5000);
+
+
+    setInterval(() => {
+      if(showDeployLog){
+        getDeploymentLog(pendingDeployments[0].key);
+      }
+    }
+    , 5000); */
   }, []);
+
+  
 
   
 
@@ -68,12 +92,16 @@ export const Home = () => {
         {pendingDeployments.map((deployment: any) => (
           <Chip
             key={deployment.key}
-            className="rounded-none text-white"
+            className={"rounded-none text-white" + (deployment.status === "running" ? ' cursor-pointer' : '')}
+            onClick={deployment.status === "running" ? () => {
+              setShowDeployLog(true);
+              getDeploymentLog(deployment.key);
+            } : undefined}
             color={
               deployment.status === "pending"
                 ? "warning"
                 : deployment.status === "running"
-                ? "default"
+                ? "primary"
                 : "default"
             }
             onClose={deployment.status === "pending" ? () => {
@@ -108,10 +136,44 @@ export const Home = () => {
                 setSelectedArtifact(artifacts[artifactKey]);
                 setIsArtifactFormOpen(true);
               }}
+              showLogs={() => {
+                setShowDeployLog(true);
+                getDeploymentLog(artifacts[artifactKey].instance.lastDeployKey);
+              }}
             />
           ))}
         </div>
       )}
+      
+        <Modal
+          isOpen={showDeployLog}
+          onOpenChange={() => setShowDeployLog(false)}
+          className="rounded-none"
+          scrollBehavior="inside"
+          size="5xl"
+          >
+             {showDeployLog && (
+          <ModalContent>
+            {(onClose) => (
+              <>
+                <ModalHeader className="flex flex-col gap-1">
+                  Deploy
+                </ModalHeader>
+                <ModalBody>
+                  {deployLogData && deployLogData.split("\n").map((line : string, key : any) => (
+                    <div key={key}>{line}<br/></div>
+                  ))}
+                </ModalBody>
+                <ModalFooter>
+                  <Button color="danger" variant="light" onPress={onClose}>
+                    Close
+                  </Button>
+                </ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        )}
+          </Modal>
 
       <div className="flex justify-end mt-2">
         <Button onPress={() => setIsArtifactFormOpen(true)}>
