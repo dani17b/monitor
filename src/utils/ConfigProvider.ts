@@ -13,8 +13,6 @@ const getConfigFile = (env : string) => {
 
 export const getConfig = () => {
     const env = process.env.REACT_APP_ENV || 'local';
-
-    console.log('Process ENV', process.env);
     const environmentConfig = getConfigFile(env);
 
     return _.merge(config, environmentConfig ||{});
