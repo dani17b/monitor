@@ -27,7 +27,7 @@
   },
   "scripts": {
     "start": "npx tailwindcss -i ./src/tailwind.css -o ./src/tailwind-dist.css && react-scripts start",
-    "build": "npx tailwindcss -i ./src/tailwind.css -o ./src/tailwind-dist.css && react-scripts build",
+    "build": "ENV=VALORRR && npx tailwindcss -i ./src/tailwind.css -o ./src/tailwind-dist.css && react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
