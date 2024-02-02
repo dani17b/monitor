@@ -1,0 +1,4 @@
+{
+    "env" : "local",
+    "apiURL" : "http://api.monitor.altiacamp.com"
+}

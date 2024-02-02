@@ -13,6 +13,7 @@ import {
   useDisclosure,
 } from "@nextui-org/react";
 import { ArtifactForm } from "../../components/artifactForm";
+import { useConfig } from "../../context/ConfigContext";
 
 export const Home = () => {
   const [artifacts, setArtifacts] = useState<any>(null);
@@ -28,21 +29,22 @@ export const Home = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   const [selectedArtifact, setSelectedArtifact] = useState<any>(null);
 
+  const config = useConfig();
   const getPendingDeployments = () => {
-    fetch("http://api.monitor.altiacamp.com/pending_deployments").then((response) => response.json()).then((data) => {
+    fetch(`${config.apiURL}/pending_deployments`).then((response) => response.json()).then((data) => {
       setPendingDeployments(data);
       setPendingDeploymentsLoading(false);
     });
   }
 
   const getDeploymentLog = (deployKey : string) => {
-    fetch(`http://api.monitor.altiacamp.com/deploy_log?deploy_key=${deployKey}`).then((response) => response.text()).then((data) => {
+    fetch(`${config.apiURL}/deploy_log?deploy_key=${deployKey}`).then((response) => response.text()).then((data) => {
       setDeployLogData(data);
     });
   }
 
   useEffect(() => {
-    fetch("http://api.monitor.altiacamp.com/info")
+    fetch(`${config.apiURL}/info`)
       .then((response) => response.json())
       .then((data) => {
         setArtifacts(data);
@@ -50,27 +52,30 @@ export const Home = () => {
       });
 
     getPendingDeployments();
+  }, []);
 
-    /* setInterval(() => {
+  useEffect(() => {
+    const pendingDeploymentsInteval = setInterval(() => {
       getPendingDeployments();
     }
     , 5000);
 
+    return () => clearInterval(pendingDeploymentsInteval)
+  }, []);
 
-    setInterval(() => {
+  useEffect(() => {
+    const getDeploymentLogInterval = setInterval(() => {
       if(showDeployLog){
         getDeploymentLog(pendingDeployments[0].key);
       }
     }
-    , 5000); */
-  }, []);
+    , 2000);
 
-  
-
-  
+    return () => clearInterval(getDeploymentLogInterval)
+  }, [showDeployLog]);
 
   const deploy = (artifact: any) => {
-    fetch("http://api.monitor.altiacamp.com/deploy", {
+    fetch(`${config.apiURL}/deploy`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -105,7 +110,7 @@ export const Home = () => {
                 : "default"
             }
             onClose={deployment.status === "pending" ? () => {
-              fetch("http://api.monitor.altiacamp.com/pending_deployments", {
+              fetch(`${config.apiURL}/pending_deployments`, {
                 method: "DELETE",
                 headers: {
                   "Content-Type": "application/json",
@@ -228,7 +233,7 @@ export const Home = () => {
         }}
         artifact={selectedArtifact}
         deploy={(artifactInfo: any) => {
-          fetch("http://api.monitor.altiacamp.com/artifact", {
+          fetch(`${config.apiURL}/artifact`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

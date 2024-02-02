@@ -3,6 +3,7 @@ import "./tailwind-dist.css";
 import "./app.css";
 import { Home } from "./modules/home";
 import { Button, Link, Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenu, NavbarMenuItem, NavbarMenuToggle, NextUIProvider } from "@nextui-org/react";
+import { useConfig } from "./context/ConfigContext";
 
 function App() {
   const menuItems = [
@@ -19,10 +20,11 @@ function App() {
   ];
 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const config = useConfig();
 
   return (
     <NextUIProvider>
-      <div className="app">
+      <div className="app flex flex-col">
         <Navbar onMenuOpenChange={setIsMenuOpen}>
           <NavbarContent>
             <NavbarMenuToggle
@@ -83,9 +85,14 @@ function App() {
             ))}
           </NavbarMenu>
         </Navbar>
-        <div className="flex w-full h-auto items-center flex-col">
+        <div className="flex h-max flex-1 items-center flex-col">
           <div className="flex z-40 max-w-[1024px] w-full h-auto items-center justify-center p-4">
             <Home />
+          </div>
+        </div>
+        <div className="flex w-full h-auto items-center justify-center flex-col bg-primary pt-2 pb-2">
+          <div className="flex z-40 max-w-[1024px] w-full h-auto items-center justify-center text-small text-white">
+            {`v${config.version} (${config.env})`}
           </div>
         </div>
       </div>

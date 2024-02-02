@@ -3,12 +3,18 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { getConfig } from './utils/ConfigProvider';
+import { ConfigContextProvider } from './context/ConfigContext';
+
 
 // @ts-ignore
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
 root.render(
   <React.StrictMode>
-    <App />
+    <ConfigContextProvider config={getConfig()}>
+      <App />
+    </ConfigContextProvider>
   </React.StrictMode>
 );
 
