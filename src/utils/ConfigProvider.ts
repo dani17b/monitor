@@ -3,7 +3,7 @@ import _ from 'lodash';
 
 const getConfigFile = (env : string) => {
     try{
-        const config = require(`../config/config_${env}.json`);
+        const config = require(`../config/config_${env.toLowerCase()}.json`);
         return config;
     }catch(e){
     }
