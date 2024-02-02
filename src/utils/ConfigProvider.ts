@@ -13,6 +13,8 @@ const getConfigFile = (env : string) => {
 
 export const getConfig = () => {
     const env = process.env.ENV || 'local';
+
+    console.log('Process ENV', process.env);
     const environmentConfig = getConfigFile(env);
 
     return _.merge(config, environmentConfig ||{});
