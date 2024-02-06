@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 const platforms = [
   { label: "NodeJS", value: "node" },
   { label: "Maven", value: "maven" },
+  { label: "Python", value: "python" },
 ];
 
 const deployTypes = [

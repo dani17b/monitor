@@ -4,10 +4,11 @@ import {
   CardBody,
   CardFooter,
   CardHeader,
-  Chip
+  Chip,
+  User
 } from "@nextui-org/react";
 import "./artifact.css";
-import { IoIosLink, IoIosRocket, IoMdCreate, IoMdPaper } from "react-icons/io";
+import { IoIosGitBranch, IoIosLink, IoIosRocket, IoMdCreate, IoMdPaper } from "react-icons/io";
 import { useState } from "react";
 
 const timestampToTimeFromNow = (timestamp: number) => {
@@ -33,6 +34,13 @@ const timestampToTimeFromNow = (timestamp: number) => {
   return `${seconds}s ago`;
 }
 
+const pad = (n : number) => n < 10 ? `0${n}` : n;
+
+const dateTimeToStr = (dateStr : any) => {
+  const date = new Date(dateStr);
+  return `${pad(date.getDate())}/${pad(date.getMonth() + 1)}/${date.getFullYear()} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+}
+
 export const Artifact = ({ artifact, deploy, showEditArtifact, showLogs }: { artifact: any, deploy : any, showEditArtifact : any, showLogs : any }) => {
   const [isFollowed, setIsFollowed] = useState(false);
 
@@ -42,7 +50,7 @@ export const Artifact = ({ artifact, deploy, showEditArtifact, showLogs }: { art
         <div className="flex gap-5">
           <div className="flex flex-col gap-1 items-start justify-center">
             <h4 className="text-small font-semibold leading-none text-default-600 flex items-center">
-              <div className={"artifact-status " + (artifact.instance.status == 'fail' ? 'bg-red-800' : 'bg-green-800')} />
+              <div className={"artifact-status " + (artifact.instance?.status == 'fail' ? 'bg-red-800' : 'bg-green-800')} />
               {artifact.artifactName}
             </h4>
             <h5 className="text-small tracking-tight text-default-400 flex items-center">
@@ -70,18 +78,41 @@ export const Artifact = ({ artifact, deploy, showEditArtifact, showLogs }: { art
         <p>
           {artifact.description}
         </p>
+        {artifact.lastCommitInfo && 
+          <>
+            <br />
+            <p>
+              <User   
+                name={artifact.lastCommitInfo.author.name}
+                description={artifact.lastCommitInfo.author.email}
+                avatarProps={{
+                  className: "uppercase",
+                }}
+              />
+            </p>
+            <div className="flex gap-1 text-default-800 text-small items-center">
+              <IoIosGitBranch />
+              Deployed commit {dateTimeToStr(artifact.lastCommitInfo.date)}
+            </div>
+            <div className="flex gap-1 text-default-400 text-small items-center">
+              {artifact.lastCommitInfo.message}
+            </div>
+          </>
+        }
         <span className="pt-2">
           <Chip className="rounded-none float-left mr-2">{artifact.type}</Chip>
           <Chip className="rounded-none float-left">{artifact.deployType}</Chip>
         </span>
       </CardBody>
       <CardFooter className="gap-3 flex">
-        <div className="flex gap-1 text-default-400 text-small items-center">
-          <IoIosRocket />
-          Last deploy {timestampToTimeFromNow(artifact.instance.lastUpdate)}
-        </div>
+        {artifact.instance &&
+          <div className="flex gap-1 text-default-400 text-small items-center">
+            <IoIosRocket />
+            Last deploy {timestampToTimeFromNow(artifact.instance.lastUpdate)}
+          </div>
+        }
         <div className="flex flex-1 justify-end gap-1 text-default-400 text-small">
-          {artifact.instance.lastDeployKey && <IoMdPaper className="cursor-pointer" onClick={() => showLogs()}/>}
+          {artifact.instance?.lastDeployKey && <IoMdPaper className="cursor-pointer" onClick={() => showLogs()}/>}
           <IoMdCreate className="cursor-pointer" onClick={() => showEditArtifact()}/>
         </div>
       </CardFooter>
