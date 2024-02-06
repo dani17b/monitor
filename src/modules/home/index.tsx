@@ -10,6 +10,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  Spinner,
   useDisclosure,
 } from "@nextui-org/react";
 import { ArtifactForm } from "../../components/artifactForm";
@@ -123,7 +124,12 @@ export const Home = () => {
               });
             } : undefined}
           >
-            {deployment.key}
+            <div className="flex items-center gap-1">
+              {deployment.status === "running" &&
+                <Spinner size="sm" color="white" className="mr-1"/>
+              }
+              {deployment.key}
+            </div>
           </Chip>
         ))}
       </div>
